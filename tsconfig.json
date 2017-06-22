@@ -1,0 +1,11 @@
+{	
+	"compilerOptions":{
+		"moduleResolution":"classic",
+		"module": "commonjs",
+		"outDir":"build",
+		"noImplicitAny" : true,
+		"target":"ES6"
+	},
+	"files":["src/*.ts"],
+	"include":["typings/**/*.d.ts"]
+}

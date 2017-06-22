@@ -1,0 +1,18 @@
+{
+  "name": "posiskernel",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:ags131/posiskernel",
+  "author": "Adam Shumann <ashumann13@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "git-rev": "^0.2.1",
+    "gulp": "^3.9.1",
+    "gulp-screeps": "^1.0.3",
+    "gulp-typescript": "^3.1.7",
+    "gulp-util": "^3.0.8",
+    "rimraf": "^2.6.1",
+    "typescript": "^2.3.4",
+    "typings": "^2.1.1"
+  }
+}
