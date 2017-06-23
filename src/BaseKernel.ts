@@ -115,8 +115,9 @@ export class BaseKernel implements IPosisKernel {
     let ids = Object.keys(this.processTable);
     for (let i = 0; i < ids.length; i++) {
       let id = ids[i];
-      if (this.processTable[id].pid === pinfo.id) {
-        this.killProcess(id);
+      let pi = this.processTable[id]
+      if (pi.pid === pinfo.id) {
+        this.killProcess(pi.pid);
       }
     }
   }
