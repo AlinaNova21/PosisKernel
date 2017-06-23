@@ -5,9 +5,7 @@ import { ExtensionRegistry } from "ExtensionRegistry";
 
 let pkernel = new BaseKernel();
 
-declare var global: Global;
-
-ExtensionRegistry.register('baseKernel', pkernel);
+ExtensionRegistry.register("baseKernel", pkernel);
 
 export function loop() {
   pkernel.loop();
