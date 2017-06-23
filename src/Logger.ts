@@ -1,15 +1,9 @@
-export enum LogLevel {
-  DEBUG = 0,
-  INFO,
-  ALERT,
-  WARN,
-  ERROR,
-  FATAL
-}
+
 
 // Use for HTML styling (Colors match screeps_console)
 export const styles = {
   default:           "color: white; background-color: black",
+  [LogLevel.SILLY]:  "color: darkblue",
   [LogLevel.DEBUG]:  "color: darkblue",
   [LogLevel.INFO]:   "color: darkgreen",
   [LogLevel.ALERT]:  "color: cyan",

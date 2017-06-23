@@ -2,6 +2,6 @@
   "name": "posiskernel",
   "globalDependencies": {
     "posis-api": "github:screepers/POSIS/dist/index.d.ts#master",
-    "screeps": "github:screepers/Screeps-Typescript-Declarations/dist/screeps.d.ts#master"
+    "screeps-typed": "github:wmulligan/screeps-typed#master"
   }
 }

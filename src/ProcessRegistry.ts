@@ -1,4 +1,4 @@
-import { Logger, LogLevel } from "Logger";
+import { Logger } from "Logger";
 
 export type PosisProcessConstructor = new () => IPosisProcess
 

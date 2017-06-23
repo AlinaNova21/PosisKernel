@@ -7,5 +7,5 @@
 		"target":"ES6"
 	},
 	"files":["src/*.ts"],
-	"include":["typings/**/*.d.ts"]
+	"include":["typings/**/*.d.ts","src/**/*.d.ts"]
 }

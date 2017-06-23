@@ -1,5 +1,5 @@
 import { ProcessRegistry } from "ProcessRegistry";
-import { Logger, LogLevel } from "Logger";
+import { Logger } from "Logger";
 
 interface ProcessInfo {
   id: PosisPID;
@@ -17,20 +17,35 @@ interface ProcessTable {
   [id: string]: ProcessInfo;
 }
 
+interface ProcessMemoryTable {
+  [id: string]: {};
+}
+
+interface KernelMemory {
+  processTable: ProcessTable;
+  processMemory: ProcessMemoryTable;
+}
+
+declare global {
+  interface Memory {
+    kernel: KernelMemory;
+  }
+}
+
 export class BaseKernel implements IPosisKernel {
   private processInstanceCache: { [id: string]: IPosisProcess } = {};
   private currentId: string = "";
   private log: Logger = new Logger("[Kernel]");
 
-  get memory(): any {
-    Memory.kernel = Memory.kernel || {};
+  get memory(): KernelMemory {
+    Memory.kernel = Memory.kernel || { processTable: {}, processMemory: {} };
     return Memory.kernel;
   }
   get processTable(): ProcessTable {
     this.memory.processTable = this.memory.processTable || {};
     return this.memory.processTable;
   }
-  get processMemory(): any {
+  get processMemory(): ProcessMemoryTable {
     this.memory.processMemory = this.memory.processMemory || {};
     return this.memory.processMemory;
   }
