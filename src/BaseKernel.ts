@@ -33,7 +33,12 @@ declare global {
 }
 
 export class BaseKernel implements IPosisKernel {
-  private processInstanceCache: { [id: string]: IPosisProcess } = {};
+  private processInstanceCache: { 
+    [id: string]: {
+      context: IPosisProcessContext,
+      process: IPosisProcess
+    }
+  } = {};
   private currentId: string = "";
   private log: Logger = new Logger("[Kernel]");
 
@@ -49,6 +54,11 @@ export class BaseKernel implements IPosisKernel {
     this.memory.processMemory = this.memory.processMemory || {};
     return this.memory.processMemory;
   }
+
+  constructor(private processRegistry: ProcessRegistry) {
+
+  }
+
   UID(): string {
     return "P" + Game.time.toString(26).slice(-6) + Math.random().toString(26).slice(-3);
   }
@@ -75,34 +85,27 @@ export class BaseKernel implements IPosisKernel {
     this.log.debug(() => `createProcess ${id}`);
     let pinfo = this.processTable[id];
     if (!pinfo || pinfo.status !== "running") throw new Error(`Process ${pinfo.id} ${pinfo.name} not running`);
-    let process = ProcessRegistry.getNewProcess(pinfo.name);
-    if (!process) throw new Error(`Could not create process ${pinfo.id} ${pinfo.name}`);
     let self = this;
-    this.processInstanceCache[id] = process;
-    Object.defineProperties(process, {
-      id: {
-        writable: false,
-        value: pinfo.id
+    let context: IPosisProcessContext = {
+      id: pinfo.id,
+      get parentId(){
+        return self.processTable[id] && self.processTable[id].pid || "";
       },
-      parentId: {
-        writable: false,
-        value: pinfo.pid
+      imageName: pinfo.name,
+      log: new Logger(`[${pinfo.id}) ${pinfo.name}]`),
+      get memory() {
+        self.processMemory[pinfo.ns] = self.processMemory[pinfo.ns] || {};
+        return self.processMemory[pinfo.ns];
       },
-      imageName: {
-        writable: false,
-        value: pinfo.name
-      },
-      log: {
-        writable: false,
-        value: new Logger(`[${pinfo.id}) ${pinfo.name}]`)
-      },
-      memory: {
-        get() {
-          self.processMemory[pinfo.ns] = self.processMemory[pinfo.ns] || {};
-          return self.processMemory[pinfo.ns];
-        }
+      queryPosisInterface(interfaceId: string): IPosisExtension | undefined {
+        if(interfaceId == 'baseKernel') return self;
+        return;
       }
-    });
+    };
+    Object.freeze(context);
+    let process = this.processRegistry.getNewProcess(pinfo.name, context);
+    if (!process) throw new Error(`Could not create process ${pinfo.id} ${pinfo.name}`);
+    this.processInstanceCache[id] = { context, process };
     return process;
   }
   // killProcess also kills all children of this process
@@ -123,7 +126,7 @@ export class BaseKernel implements IPosisKernel {
   }
 
   getProcessById(id: PosisPID): IPosisProcess | undefined {
-    return this.processTable[id] && this.processTable[id].status === "running" && (this.processInstanceCache[id] || this.createProcess(id));
+    return this.processTable[id] && this.processTable[id].status === "running" && (this.processInstanceCache[id] && this.processInstanceCache[id].process || this.createProcess(id));
   }
 
   // passing undefined as parentId means "make me a root process"
@@ -138,7 +141,9 @@ export class BaseKernel implements IPosisKernel {
     let ids = Object.keys(this.processTable);
     if (ids.length === 0) {
       let proc = this.startProcess("init", {});
-      if (proc) ids.push(proc.id.toString());
+      // Due to breaking changes in the standard, 
+      // init can no longer be ran on first tick.
+      // if (proc) ids.push(proc.id.toString());
     }
     for (let i = 0; i < ids.length; i++) {
       let id = ids[i];

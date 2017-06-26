@@ -3,22 +3,22 @@ import { Logger } from "Logger";
 let logger = new Logger("[ExtensionRegistry]");
 logger.level = LogLevel.DEBUG;
 
-let registry: { [interfaceId: string]: IPosisExtension } = {};
 export class ExtensionRegistry {
-  static register(interfaceId: string, extension: IPosisExtension): boolean {
-    if (registry[interfaceId]){
+  private registry: { [interfaceId: string]: IPosisExtension } = {};
+  constructor() {
+  }
+  register(interfaceId: string, extension: IPosisExtension): boolean {
+    if (this.registry[interfaceId]) {
       logger.error(`Interface Id already registered: ${interfaceId}`);
       return false;
     }
     logger.debug(`Registered ${interfaceId}`);
-    registry[interfaceId] = extension;
+    this.registry[interfaceId] = extension;
     return true;
   }
-  static getExtension(interfaceId: string): IPosisExtension | undefined {
-    if (!registry[interfaceId]) return;
-    return registry[interfaceId];
+  getExtension(interfaceId: string): IPosisExtension | undefined {
+    if (!this.registry[interfaceId]) return;
+    return this.registry[interfaceId];
   }
 }
 
-declare var global: Global
-global.queryPosisInterface = ExtensionRegistry.getExtension;

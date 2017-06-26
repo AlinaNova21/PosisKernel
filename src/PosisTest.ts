@@ -1,6 +1,5 @@
 // From unfleshedone
 // Root process expects to be started with 'startContext = { maxRunTime: N }'
-declare var global: Global;
 
 interface POSISTest_BaseProcessMemory
 {
@@ -17,6 +16,10 @@ class POSISTest_BaseProcess implements IPosisProcess
   public testName = "POSIS base:";
   public static ImageName = "POSISTest/PosisBaseTestProcess";
 
+  constructor(private context: IPosisProcessContext){
+
+  }
+
   public get tmemory(): POSISTest_BaseProcessMemory
   {
     return this.memory as POSISTest_BaseProcessMemory;
@@ -24,7 +27,7 @@ class POSISTest_BaseProcess implements IPosisProcess
 
   public run(): void
   {
-    let kernel: IPosisKernel = global.queryPosisInterface("baseKernel") as IPosisKernel;
+    let kernel: IPosisKernel = this.context.queryPosisInterface("baseKernel") as IPosisKernel;
     let fatal = false;
 
     if (this.log === undefined)
@@ -96,13 +99,22 @@ class POSISTest_BaseProcess implements IPosisProcess
 
   // ==================================
   // Host OS is providing everything below
-  public memory: any; // private memory
-  public imageName: string; // image name (maps to constructor)
-  public id: PosisPID; // ID
-  public parentId: PosisPID; // Parent ID
-  public log: IPosisLogger; // Logger
+  get memory(): any { // private memory
+    return this.context.memory;
+  }
+  get imageName(): string { // image name (maps to constructor)
+    return this.context.imageName;
+  }
+  get id(): PosisPID { // ID
+    return this.context.id;
+  }
+  get parentId(): PosisPID { // Parent ID
+    return this.context.parentId;
+  }
+  get log(): IPosisLogger { // Logger
+    return this.context.log;
+  }
 }
-global.registerPosisProcess(POSISTest_BaseProcess.ImageName, POSISTest_BaseProcess);
 
 interface IPosisBundleDefinition
 {
@@ -111,8 +123,8 @@ interface IPosisBundleDefinition
 }
 
 // tslint:disable-next-line:max-classes-per-file
-export const bundleDefinition: IPosisBundleDefinition =
-{
-  rootImageName: POSISTest_BaseProcess.ImageName,
-  defaultStartContext: { maxRunTime: 10 },
-};
+export const bundle: IPosisBundle = {
+  install(registry: IPosisProcessRegistry) {
+    registry.register(POSISTest_BaseProcess.ImageName, POSISTest_BaseProcess);
+  }
+}

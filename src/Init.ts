@@ -1,12 +1,18 @@
-declare var global: Global;
 class Init implements IPosisProcess {
-  memory: any; // private memory
-  imageName: string; // image name (maps to constructor)
-  id: PosisPID; // ID
-  parentId: PosisPID; // Parent ID
-  log: IPosisLogger; // Logger 
+  constructor(private context: IPosisProcessContext){
+
+  }
+  get id(){
+    return this.context.id
+  }
+  get log(){
+    return this.context.log
+  }
+  get memory(){
+    return this.context.memory
+  }
   get posisTest(): IPosisProcess | undefined {
-    let kernel: IPosisKernel = global.queryPosisInterface("baseKernel") as IPosisKernel;
+    let kernel: IPosisKernel = this.context.queryPosisInterface("baseKernel") as IPosisKernel;
     if (!this.memory.posisTestId) return;
     return kernel.getProcessById(this.memory.posisTestId);
   }
@@ -14,8 +20,7 @@ class Init implements IPosisProcess {
     this.memory.posisTestId = value.id;
   }
   run() {
-    let kernel: IPosisKernel = global.queryPosisInterface("baseKernel") as IPosisKernel;
-    let parent = kernel.getProcessById(this.parentId);
+    let kernel: IPosisKernel = this.context.queryPosisInterface("baseKernel");
     this.log.info(`TICK! ${Game.time} ${this.memory.msg || "init"}`);
     if (!this.posisTest) {
       let child = kernel.startProcess("POSISTest/PosisBaseTestProcess", {
@@ -25,4 +30,10 @@ class Init implements IPosisProcess {
     }
   }
 }
-global.registerPosisProcess("init", Init);
+
+export const bundle: IPosisBundle = {
+  install(registry: IPosisProcessRegistry) {
+    registry.register("init", Init);
+  }
+}
+
