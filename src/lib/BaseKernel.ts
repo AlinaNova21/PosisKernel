@@ -1,7 +1,7 @@
-import { ProcessRegistry } from "ProcessRegistry";
-import { Logger } from "Logger";
+import { ProcessRegistry } from "../lib/ProcessRegistry";
+import { Logger } from "../lib/Logger";
 
-interface ProcessInfo {
+export interface ProcessInfo {
   id: PosisPID;
   pid: PosisPID;
   name: string;
@@ -13,15 +13,15 @@ interface ProcessInfo {
   error?: string;
 }
 
-interface ProcessTable {
+export interface ProcessTable {
   [id: string]: ProcessInfo;
 }
 
-interface ProcessMemoryTable {
+export interface ProcessMemoryTable {
   [id: string]: {};
 }
 
-interface KernelMemory {
+export interface KernelMemory {
   processTable: ProcessTable;
   processMemory: ProcessMemoryTable;
 }
@@ -63,7 +63,7 @@ export class BaseKernel implements IPosisKernel {
     return "P" + Game.time.toString(26).slice(-6) + Math.random().toString(26).slice(-3);
   }
 
-  startProcess(imageName: string, startContext: any): IPosisProcess | undefined {
+  startProcess(imageName: string, startContext: any): { pid: PosisPID; process: IPosisProcess; } | undefined {
     let id = this.UID() as PosisPID;
 
     let pinfo: ProcessInfo = {
@@ -78,7 +78,7 @@ export class BaseKernel implements IPosisKernel {
     this.processMemory[pinfo.ns] = startContext || {};
     let process = this.createProcess(id);
     this.log.debug(() => `startProcess ${imageName}`);
-    return process;
+    return { pid: id,  process };
   }
 
   createProcess(id: PosisPID): IPosisProcess {
@@ -98,6 +98,7 @@ export class BaseKernel implements IPosisKernel {
         return self.processMemory[pinfo.ns];
       },
       queryPosisInterface(interfaceId: string): IPosisExtension | undefined {
+        // Stub for now until I figure out howto make this work without kernel having to import
         if(interfaceId == 'baseKernel') return self;
         return;
       }
@@ -143,7 +144,7 @@ export class BaseKernel implements IPosisKernel {
       let proc = this.startProcess("init", {});
       // Due to breaking changes in the standard, 
       // init can no longer be ran on first tick.
-      // if (proc) ids.push(proc.id.toString());
+      if (proc) ids.push(proc.pid.toString());
     }
     for (let i = 0; i < ids.length; i++) {
       let id = ids[i];

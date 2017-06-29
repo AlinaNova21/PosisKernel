@@ -1,7 +1,7 @@
 {
   "name": "posiskernel",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "dist/kernel.js",
   "repository": "git@github.com:ags131/posiskernel",
   "author": "Adam Shumann <ashumann13@gmail.com>",
   "license": "MIT",
@@ -12,10 +12,16 @@
     "gulp-typescript": "^3.1.7",
     "gulp-util": "^3.0.8",
     "rimraf": "^2.6.1",
+    "rollup": "^0.43.0",
+    "rollup-plugin-includepaths": "^0.2.2",
+    "rollup-plugin-root-import": "^0.2.2",
+    "rollup-plugin-typescript2": "^0.4.4",
     "typescript": "^2.3.4",
     "typings": "^2.1.1"
   },
-  "scripts":{
-    "build": "gulp"
-  }
+  "scripts": {
+    "build": "rollup -c",
+    "postinstall": "typings install"
+  },
+  "dependencies": {}
 }

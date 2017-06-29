@@ -15,7 +15,7 @@ gulp.task('clean', ()=>{
   return rm.sync('build') && rm.sync('dist')
 })
 
-gulp.task('dist', ['build'], ()=>{
+gulp.task('dist', ['build','typings'], ()=>{
   return gulp.src(`build/*.js`)
     .pipe(gulp.dest(`dist`))
 })
@@ -32,8 +32,23 @@ gulp.task('compile', () => {
     .pipe(tsProject())
     .js.pipe(gulp.dest("build"))
 })
+gulp.task('typings', () => {
+  return tsProject.src()
+    .pipe(tsProject())
+    .dts.pipe(gulp.dest("dist"))
+})
 
 gulp.task('screeps', ['clean','dist'], () => {
+  gitrev.branch((branch) => {
+    let ptr = false
+    auth.branch = auth.branch || branch
+    auth.ptr = ptr
+    gutil.log('Branch:',auth.branch)
+    gulp.src(`dist/*.js`)
+      .pipe(screeps(auth))
+  })
+})
+gulp.task('push', [], () => {
   gitrev.branch((branch) => {
     let ptr = false
     auth.branch = auth.branch || branch

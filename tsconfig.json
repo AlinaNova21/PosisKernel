@@ -1,11 +1,15 @@
 {	
 	"compilerOptions":{
-		"moduleResolution":"classic",
+		"moduleResolution":"node",
 		"module": "commonjs",
 		"outDir":"build",
 		"noImplicitAny" : true,
-		"target":"ES6"
+		"target":"ES6",
+		"declaration":true
 	},
-	"files":["src/*.ts"],
-	"include":["typings/**/*.d.ts","src/**/*.d.ts"]
+	"include":[
+		"typings/**/*.d.ts",
+		"src/**/*.d.ts", 
+		"src/**/*.ts"
+	]
 }

@@ -1,3 +1,9 @@
+
+interface IInitMemory {
+  posisTestId?: PosisPID,
+  msg?: string
+}
+
 class Init implements IPosisProcess {
   constructor(private context: IPosisProcessContext){
 
@@ -8,7 +14,7 @@ class Init implements IPosisProcess {
   get log(){
     return this.context.log
   }
-  get memory(){
+  get memory(): IInitMemory {
     return this.context.memory
   }
   get posisTest(): IPosisProcess | undefined {
@@ -23,15 +29,15 @@ class Init implements IPosisProcess {
     let kernel: IPosisKernel = this.context.queryPosisInterface("baseKernel");
     this.log.info(`TICK! ${Game.time} ${this.memory.msg || "init"}`);
     if (!this.posisTest) {
-      let child = kernel.startProcess("POSISTest/PosisBaseTestProcess", {
+      let { pid, process } = kernel.startProcess("POSISTest/PosisBaseTestProcess", {
         maxRunTime: 5
       });
-      this.posisTest = child;
+      this.posisTest = process;
     }
   }
 }
 
-export const bundle: IPosisBundle = {
+export const bundle: IPosisBundle<{}> = {
   install(registry: IPosisProcessRegistry) {
     registry.register("init", Init);
   }

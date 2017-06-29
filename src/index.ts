@@ -1,10 +1,8 @@
-import { BaseKernel } from "BaseKernel";
-import { ProcessRegistry } from "ProcessRegistry";
-import { ExtensionRegistry } from "ExtensionRegistry";
+import { BaseKernel } from "./lib/BaseKernel";
+import { ProcessRegistry } from "./lib/ProcessRegistry";
+import { ExtensionRegistry } from "./lib/ExtensionRegistry";
 
-import * as InitBundle from "Init";
-import * as PosisTestBundle from "PosisTest";
-
+import { bundle as bin } from "./bin/index";
 
 let extensionRegistry = new ExtensionRegistry();
 let processRegistry = new ProcessRegistry();
@@ -13,8 +11,7 @@ let pkernel = new BaseKernel(processRegistry);
 
 extensionRegistry.register("baseKernel", pkernel);
 
-processRegistry.install(InitBundle.bundle);
-processRegistry.install(PosisTestBundle.bundle);
+processRegistry.install(bin);
 
 export function loop() {
   pkernel.loop();

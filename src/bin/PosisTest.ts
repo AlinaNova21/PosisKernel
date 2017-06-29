@@ -123,7 +123,7 @@ interface IPosisBundleDefinition
 }
 
 // tslint:disable-next-line:max-classes-per-file
-export const bundle: IPosisBundle = {
+export const bundle: IPosisBundle<{}> = {
   install(registry: IPosisProcessRegistry) {
     registry.register(POSISTest_BaseProcess.ImageName, POSISTest_BaseProcess);
   }

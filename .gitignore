@@ -61,3 +61,4 @@ typings/
 .env
 
 auth.js
+.rpt2_cache/
