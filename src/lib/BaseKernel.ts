@@ -1,4 +1,5 @@
 import { ProcessRegistry } from "../lib/ProcessRegistry";
+import { ExtensionRegistry } from "../lib/ExtensionRegistry";
 import { Logger } from "../lib/Logger";
 
 export interface ProcessInfo {
@@ -8,6 +9,7 @@ export interface ProcessInfo {
   ns: string;
   status: string;
   started: number;
+  wake?: number;  
   ended?: number;
   process?: IPosisProcess;
   error?: string;
@@ -32,7 +34,7 @@ declare global {
   }
 }
 
-export class BaseKernel implements IPosisKernel {
+export class BaseKernel implements IPosisKernel, IPosisSleepExtension {
   private processInstanceCache: { 
     [id: string]: {
       context: IPosisProcessContext,
@@ -55,7 +57,7 @@ export class BaseKernel implements IPosisKernel {
     return this.memory.processMemory;
   }
 
-  constructor(private processRegistry: ProcessRegistry) {
+  constructor(private processRegistry: ProcessRegistry, private extensionRegistry: ExtensionRegistry) {
 
   }
 
@@ -97,11 +99,7 @@ export class BaseKernel implements IPosisKernel {
         self.processMemory[pinfo.ns] = self.processMemory[pinfo.ns] || {};
         return self.processMemory[pinfo.ns];
       },
-      queryPosisInterface(interfaceId: string): IPosisExtension | undefined {
-        // Stub for now until I figure out howto make this work without kernel having to import
-        if(interfaceId == 'baseKernel') return self;
-        return;
-      }
+      queryPosisInterface: self.extensionRegistry.getExtension.bind(self.extensionRegistry)
     };
     Object.freeze(context);
     let process = this.processRegistry.getNewProcess(pinfo.name, context);
@@ -146,13 +144,16 @@ export class BaseKernel implements IPosisKernel {
       // init can no longer be ran on first tick.
       if (proc) ids.push(proc.pid.toString());
     }
+    let runCnt = 0
     for (let i = 0; i < ids.length; i++) {
       let id = ids[i];
       let pinfo = this.processTable[id];
       if (pinfo.status !== "running" && pinfo.ended < Game.time - 100) {
         delete this.processTable[id];
       }
+      if (pinfo.wake && pinfo.wake > Game.time) continue;
       if (pinfo.status !== "running") continue;
+      runCnt++
       try {
         let proc = this.getProcessById(id);
         if (!proc) throw new Error(`Could not get process ${id} ${pinfo.name}`);
@@ -166,5 +167,13 @@ export class BaseKernel implements IPosisKernel {
         this.log.error(() => `[${id}] ${pinfo.name} crashed\n${e.stack}`);
       }
     }
+    if(runCnt == 0)
+      this.startProcess("init", {});
+  }
+
+  sleep(ticks: number): void {
+    let pinfo = this.processTable[this.currentId]
+    if(!pinfo) return
+    pinfo.wake = Game.time + ticks    
   }
 }

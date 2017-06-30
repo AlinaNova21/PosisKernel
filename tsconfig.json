@@ -5,7 +5,8 @@
 		"outDir":"build",
 		"noImplicitAny" : true,
 		"target":"ES6",
-		"declaration":true
+		"declaration":true,
+		"experimentalDecorators":true
 	},
 	"include":[
 		"typings/**/*.d.ts",

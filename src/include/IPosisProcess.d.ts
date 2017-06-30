@@ -1,3 +1,0 @@
-interface IPosisProcess {
-  id: PosisPID
-}

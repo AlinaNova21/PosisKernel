@@ -21,7 +21,8 @@
   },
   "scripts": {
     "build": "rollup -c",
-    "postinstall": "typings install"
+    "postinstall": "typings install",
+    "deploy": "rollup -c && gulp push"
   },
   "dependencies": {}
 }

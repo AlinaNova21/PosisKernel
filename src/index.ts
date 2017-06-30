@@ -4,12 +4,13 @@ import { ExtensionRegistry } from "./lib/ExtensionRegistry";
 
 import { bundle as bin } from "./bin/index";
 
-let extensionRegistry = new ExtensionRegistry();
-let processRegistry = new ProcessRegistry();
+export let extensionRegistry = new ExtensionRegistry();
+export let processRegistry = new ProcessRegistry();
 
-let pkernel = new BaseKernel(processRegistry);
+let pkernel = new BaseKernel(processRegistry, extensionRegistry);
 
 extensionRegistry.register("baseKernel", pkernel);
+extensionRegistry.register("sleep", pkernel);
 
 processRegistry.install(bin);
 
