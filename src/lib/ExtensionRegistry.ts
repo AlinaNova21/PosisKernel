@@ -9,10 +9,10 @@ export class ExtensionRegistry implements IPosisExtension {
     this.register('agsExtensionRegistry', this);
   }
   register(interfaceId: string, extension: IPosisExtension): boolean {
-    if (this.registry[interfaceId]) {
-      logger.error(`Interface Id already registered: ${interfaceId}`);
-      return false;
-    }
+    // if (this.registry[interfaceId]) {
+    //   logger.error(`Interface Id already registered: ${interfaceId}`);
+    //   return false;
+    // }
     logger.debug(`Registered ${interfaceId}`);
     this.registry[interfaceId] = extension;
     return true;

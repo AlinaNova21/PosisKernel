@@ -17,8 +17,10 @@ export interface ServiceDefinition {
 
 class Init implements IPosisProcess {
   constructor(private context: IPosisProcessContext){
+    this.addService("spawnManager","ags131/SpawnManager",{},true)
     this.addService("sleeperTest","ags131/SleeperTest",{},true)
-    this.addService("baseTest","POSISTest/PosisBaseTestProcess",{ maxRunTime: 5 })
+    this.addService("spawnTest","ags131/SpawnTest",{},true)
+    // this.addService("baseTest","POSISTest/PosisBaseTestProcess",{ maxRunTime: 5 })
   }
   get id(){
     return this.context.id

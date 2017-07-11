@@ -3,5 +3,8 @@
   "globalDependencies": {
     "posis-api": "github:screepers/POSIS/dist/index.d.ts#master",
     "screeps-typed": "github:wmulligan/screeps-typed#master"
+  },
+  "dependencies": {
+    "lodash": "registry:npm/lodash#4.0.0+20161015015725"
   }
 }
