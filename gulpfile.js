@@ -49,12 +49,8 @@ gulp.task('screeps', ['clean','dist'], () => {
   })
 })
 gulp.task('push', [], () => {
-  gitrev.branch((branch) => {
-    let ptr = false
-    auth.branch = auth.branch || branch
-    auth.ptr = ptr
-    gutil.log('Branch:',auth.branch)
-    gulp.src(`dist/*.js`)
-      .pipe(screeps(auth))
-  })
+  auth.ptr = false
+  gutil.log('Branch:',auth.branch)
+  return gulp.src(`dist/*.js`)
+    .pipe(screeps(auth))
 })

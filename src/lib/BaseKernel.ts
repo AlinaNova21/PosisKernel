@@ -62,7 +62,7 @@ export class BaseKernel implements IPosisKernel, IPosisSleepExtension {
   }
 
   UID(): string {
-    return "P" + Game.time.toString(26).slice(-6) + Math.random().toString(26).slice(-3);
+    return ("P" + Game.time.toString(26).slice(-6) + Math.random().toString(26).slice(-3)).toUpperCase();
   }
 
   startProcess(imageName: string, startContext: any): { pid: PosisPID; process: IPosisProcess; } | undefined {
@@ -114,12 +114,14 @@ export class BaseKernel implements IPosisKernel, IPosisSleepExtension {
     if (!pinfo) return;
     this.log.warn(() => `killed ${id}`);
     pinfo.status = "killed";
+    if(pinfo.pid == '') return
     let ids = Object.keys(this.processTable);
     for (let i = 0; i < ids.length; i++) {
       let id = ids[i];
       let pi = this.processTable[id]
       if (pi.pid === pinfo.id) {
-        this.killProcess(pi.pid);
+        if(pi.status == 'running')
+          this.killProcess(id);
       }
     }
   }

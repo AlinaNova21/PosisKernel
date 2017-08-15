@@ -9,6 +9,7 @@
 		"experimentalDecorators":true
 	},
 	"include":[
+		"node_modules/@types/**/*.d.ts",
 		"typings/**/*.d.ts",
 		"src/**/*.d.ts", 
 		"src/**/*.ts"

@@ -69,7 +69,8 @@ class Init implements IPosisProcess {
           }
           break
         case "stopped":
-          if(proc){
+          if(proc && service && service.pid){
+            this.log.info(`Killing stopped process ${service.name} ${service.pid}`)
             this.kernel.killProcess(service.pid)
           }
           break
