@@ -114,6 +114,7 @@ export class BaseKernel implements IPosisKernel, IPosisSleepExtension {
     if (!pinfo) return;
     this.log.warn(() => `killed ${id}`);
     pinfo.status = "killed";
+    pinfo.ended = Game.time;
     if(pinfo.pid == '') return
     let ids = Object.keys(this.processTable);
     for (let i = 0; i < ids.length; i++) {
