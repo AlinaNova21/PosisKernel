@@ -1,5 +1,7 @@
 # PosisKernel
 
+Checkout [ZeSwarm](https://github.com/ags131/ZeSwarm) for a live in use version :)
+
 ## Quick start
 
 1) Rename auth.sample.js to auth.js
